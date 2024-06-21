@@ -1,4 +1,5 @@
 using UnityEngine;
+using System;
 
 namespace UnityEngine.Rendering.Universal
 {
@@ -9,10 +10,10 @@ namespace UnityEngine.Rendering.Universal
 
         private const int k_EyeCount = 2;
 
-        readonly Matrix4x4[] m_ViewProjection = new Matrix4x4[k_EyeCount];
-        readonly Matrix4x4[] m_PreviousViewProjection = new Matrix4x4[k_EyeCount];
-        readonly int[] m_LastFrameIndex = new int[k_EyeCount];
-        readonly float[] m_PrevAspectRatio = new float[k_EyeCount];
+        Matrix4x4[] m_ViewProjection = new Matrix4x4[k_EyeCount];
+        Matrix4x4[] m_PreviousViewProjection = new Matrix4x4[k_EyeCount];
+        int[] m_LastFrameIndex = new int[k_EyeCount];
+        float[] m_PrevAspectRatio = new float[k_EyeCount];
 
         #endregion
 
@@ -51,6 +52,24 @@ namespace UnityEngine.Rendering.Universal
         {
             get => m_PreviousViewProjection;
         }
+
+        internal int GetXRMultiPassId(ref CameraData cameraData)
+        {
+#if ENABLE_VR && ENABLE_XR_MODULE
+            int id = cameraData.xr.enabled ? cameraData.xr.multipassId : 0;
+            if (id >= m_ViewProjection.Length)
+            {
+                Array.Resize(ref m_ViewProjection, id + 1);
+                Array.Resize(ref m_PreviousViewProjection, id + 1);
+                Array.Resize(ref m_LastFrameIndex, id + 1);
+                Array.Resize(ref m_PrevAspectRatio, id + 1);
+            }
+            return id;
+#else
+            return 0;
+#endif
+        }
+
         #endregion
 
         public void Reset()
@@ -62,15 +81,6 @@ namespace UnityEngine.Rendering.Universal
                 m_LastFrameIndex[i] = -1;
                 m_PrevAspectRatio[i] = -1;
             }
-        }
-
-        internal int GetXRMultiPassId(ref CameraData cameraData)
-        {
-#if ENABLE_VR && ENABLE_XR_MODULE
-            return cameraData.xr.enabled ? cameraData.xr.multipassId : 0;
-#else
-            return 0;
-#endif
         }
 
         public void Update(ref CameraData cameraData)
