@@ -890,7 +890,7 @@ namespace UnityEngine.Rendering.Universal
             }
 
             bool isStackedRendering = lastActiveOverlayCameraIndex != -1;
-            
+
             // Prepare XR rendering
             var xrActive = false;
             var xrRendering = baseCameraAdditionalData?.allowXRRendering ?? true;
@@ -926,7 +926,7 @@ namespace UnityEngine.Rendering.Universal
                     UpdateCameraData(ref baseCameraData, baseCameraData.xr);
 
                     // Handle the case where camera position is modified in BeginCameraRendering
-                    xrLayout.ReconfigurePass(baseCameraData.xr, baseCamera);
+                    //xrLayout.ReconfigurePass(baseCameraData.xr, baseCamera); //CUSTOM: Fails when injecting more than 4 views
                     XRSystemUniversal.BeginLateLatching(baseCamera, baseCameraData.xrUniversal);
                 }
 #endif
@@ -948,7 +948,7 @@ namespace UnityEngine.Rendering.Universal
 #endif
                 // update the base camera flag so that the scene depth is stored if needed by overlay cameras later in the frame
                 baseCameraData.postProcessingRequiresDepthTexture |= cameraStackRequiresDepthForPostprocessing;
-                
+
                 // Check whether the camera stack final output is HDR
                 // This is equivalent of UniversalCameraData.isHDROutputActive but without necessiting the base camera to be the last camera in the stack.
                 bool hdrDisplayOutputActive = mainHdrDisplayOutputActive;
@@ -960,7 +960,7 @@ namespace UnityEngine.Rendering.Universal
                 bool finalOutputHDR = asset.supportsHDR && hdrDisplayOutputActive // Check whether any HDR display is active and the render pipeline asset allows HDR rendering
                     && baseCamera.targetTexture == null && (baseCamera.cameraType == CameraType.Game || baseCamera.cameraType == CameraType.VR) // Check whether the stack outputs to a screen
                     && baseCameraData.allowHDROutput; // Check whether the base camera allows HDR output
-                
+
                 // Update stack-related parameters
                 baseCameraData.stackAnyPostProcessingEnabled = anyPostProcessingEnabled;
                 baseCameraData.stackLastCameraOutputToHDR = finalOutputHDR;
@@ -991,7 +991,7 @@ namespace UnityEngine.Rendering.Universal
                             CameraData overlayCameraData = baseCameraData;
                             overlayCameraData.camera = currCamera;
                             overlayCameraData.baseCamera = baseCamera;
-                            
+
                             UpdateCameraStereoMatrices(currAdditionalCameraData.camera, xrPass);
 
                             using (new ProfilingScope(Profiling.Pipeline.beginCameraRendering))
@@ -1006,7 +1006,7 @@ namespace UnityEngine.Rendering.Universal
 
                             bool lastCamera = i == lastActiveOverlayCameraIndex;
                             InitializeAdditionalCameraData(currCamera, currAdditionalCameraData, lastCamera, ref overlayCameraData);
-                            
+
                             overlayCameraData.stackAnyPostProcessingEnabled = anyPostProcessingEnabled;
                             overlayCameraData.stackLastCameraOutputToHDR = finalOutputHDR;
 
@@ -1430,7 +1430,7 @@ namespace UnityEngine.Rendering.Universal
 #endif
 
             cameraData.backgroundColor = CoreUtils.ConvertSRGBToActiveColorSpace(backgroundColorSRGB);
-            
+
             cameraData.stackAnyPostProcessingEnabled = cameraData.postProcessEnabled;
             cameraData.stackLastCameraOutputToHDR = cameraData.isHDROutputActive;
         }
@@ -1942,7 +1942,7 @@ namespace UnityEngine.Rendering.Universal
 
             return hdrDisplayOutputActive;
         }
-        
+
         // We only want to enable HDR Output for the game view once
         // since the game itself might want to control this
         internal bool enableHDROnce = true;
