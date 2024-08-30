@@ -306,7 +306,8 @@ namespace UnityEngine.Experimental.Rendering
         }
 
         // XRTODO : expose as public API
-        static void SetLayoutOverride(Action<XRLayout, Camera> action)
+        // CUSTOM: Exposed as public API
+        static public void SetLayoutOverride(Action<XRLayout, Camera> action)
         {
             s_LayoutOverride = action;
         }
