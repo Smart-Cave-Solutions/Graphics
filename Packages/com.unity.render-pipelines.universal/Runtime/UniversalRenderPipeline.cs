@@ -1036,7 +1036,7 @@ namespace UnityEngine.Rendering.Universal
                         UpdateCameraData(baseCameraData, xrPass);
 
                         // Handle the case where camera position is modified in BeginCameraRendering
-                        xrLayout.ReconfigurePass(xrPass, baseCamera);
+                        //xrLayout.ReconfigurePass(xrPass, baseCamera);
                         XRSystemUniversal.BeginLateLatching(baseCamera, xrPassUniversal);
                     }
 #endif
